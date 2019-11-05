@@ -72,6 +72,32 @@ services:
     volumes:
       - 'localstack_data:/localstack/data'
       - 'localstack_data:/localstack/s3'
+  form:
+    depends_on:
+      - es01
+      - es02
+      - kafka
+      - zookeeper
+      - localstack
+    build:
+      context: ../form-api
+      dockerfile: dev.Dockerfile
+    ports:
+      - '6045:6045'
+    restart: always
+    init: true
+    healthcheck:
+      test: 'curl --fail -s http://localhost:6045/version || exit 1'
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      - NODE_ENV=dev-docker
+      - 'CLOUD9_NAME=${CLOUD9_NAME}'
+    volumes:
+      - '../form-api:/usr/src/app'
+      - '~/.aws:/root/.aws'
+      - /usr/src/app/node_modules/
 volumes:
   data01:
     driver: local
