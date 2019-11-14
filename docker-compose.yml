@@ -57,6 +57,7 @@ services:
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CREATE_TOPICS="Form-Create:2:3,Form-Update:2:3,Form-Delete:2:3"
     depends_on:
       - zookeeper
   localstack:
