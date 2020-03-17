@@ -129,6 +129,37 @@ services:
       - '../auditlog:/usr/src/app'
       - '~/.aws:/root/.aws'
       - /usr/src/app/node_modules/
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+  notifier:
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - zookeeper
+      - redis
+    build:
+      context: ../notifier-service
+      dockerfile: dev.Dockerfile
+    ports:
+      - '4051:4051'
+    restart: always
+    init: true
+    healthcheck:
+      test: 'curl --fail -s http://localhost:4051/version || exit 1'
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      - NODE_ENV=dev-docker
+    volumes:
+      - '../notifier-service:/usr/src/app'
+      - '~/.aws:/root/.aws'
+      - /usr/src/app/node_modules/
 volumes:
   data01:
     driver: local
