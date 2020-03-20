@@ -145,12 +145,14 @@ services:
     build:
       context: ../notifier-service
       dockerfile: dev.Dockerfile
+      args:
+        RSA: '${RSA}'
     ports:
-      - '4051:4051'
+      - '4100:4100'
     restart: always
     init: true
     healthcheck:
-      test: 'curl --fail -s http://localhost:4051/version || exit 1'
+      test: 'curl --fail -s http://localhost:4100/version || exit 1'
       interval: 30s
       timeout: 10s
       retries: 5
